@@ -13,12 +13,16 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
-    - name: Set up
+    - name: Set up SSH
       run: |
         mkdir -p ~/.ssh
         echo "${{ secrets.SSH_SECRET_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan 83.166.234.234 >> ~/.ssh/known_hosts
+
+    - name: Configure Git Safe Directory
+      run: |
+        ssh -i ~/.ssh/id_rsa ubuntu@83.166.234.234 "git config --global --add safe.directory /home/ubuntu/hw_6_back"
 
     - name: Deploy
       run: |
