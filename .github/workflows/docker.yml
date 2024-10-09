@@ -1,0 +1,25 @@
+name: Deploy Docker
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Set up
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_SECRET_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan 83.166.234.234 >> ~/.ssh/known_hosts
+
+    - name: Deploy
+      run: |
+        ssh -i ~/.ssh/id_rsa ubuntu@83.166.234.234 "cd /home/ubuntu/hw_6_back && git pull origin master && sudo docker-compose up --build -d"
